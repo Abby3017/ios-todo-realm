@@ -23,12 +23,10 @@ const TodoService = {
 
   save(todo) {
     if (repository.objects('Todo').filtered(`title = '${todo.title}'`).length) return;
-
     repository.write(() => {
       todo.updatedAt = new Date();
       repository.create('Todo', todo);
     });
-    console.log('written to database');
   },
 
   update(todo, callback) {

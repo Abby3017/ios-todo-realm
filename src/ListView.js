@@ -41,10 +41,10 @@ class ListView extends Component {
     if (this.forceUpdate) this.forceUpdate();
   }
 
-  listView() {
+  listDisplayView() {
+    console.log(this.state.dataList);
     if (this.state.dataList.length) {
       return (<SortableListView
-        ref={listView}
         style={{ flex: 1 }}
         data={this.state.dataList}
         order={dataListOrder}
@@ -62,7 +62,7 @@ class ListView extends Component {
           data={Array.from(dataList)}
           updateDataList={this.updateDataList}
         />
-        {this.listView}
+        {this.listDisplayView()}
       </View>
     );
   }
