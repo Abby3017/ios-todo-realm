@@ -1,37 +1,27 @@
 import React, { Component } from 'react';
 import { TouchableHighlight, View, Text } from 'react-native';
+import PropTypes from 'prop-types';
+
 import CheckBox from './CheckBox';
 import TodoService from './TodoService';
 
 class ListViewItem extends Component {
   constructor(props) {
     super(props);
-    this._onCheckBoxPressed = this._onCheckBoxPressed.bind(this);
-    this.state = {
-      data: this.props.data,
-    };
+    this.onCheckBoxPressed = this.onCheckBoxPressed.bind(this);
   }
 
-  componentWillReceiveProps(props) {
-    this.setState({
-      data: props.data,
-    });
-  }
-
-  _onCheckBoxPressed() {
-    const data = this.state.data;
+  onCheckBoxPressed() {
+    const { data } = this.props;
     TodoService.update(data, () => {
       data.completed = !data.completed;
-    });
-    this.setState({
-      data,
     });
 
     this.props.onCompletedChange();
   }
 
   render() {
-    const data = this.state.data;
+    const { data } = this.props;
     const color = data.completed ? '#C5C8C9' : '#000';
     const textDecorationLine = data.completed ? 'line-through' : 'none';
     return (
@@ -43,12 +33,33 @@ class ListViewItem extends Component {
         {...this.props.sortHandlers}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <CheckBox data={data} color={color} onCheckBoxPressed={this._onCheckBoxPressed} />
+          <CheckBox data={data} color={color} onCheckBoxPressed={this.onCheckBoxPressed} />
           <Text style={{ fontSize: 18, color, textDecorationLine }}>{data.title}</Text>
         </View>
       </TouchableHighlight>
     );
   }
 }
+
+ListViewItem.propTypes = {
+  onCompletedChange: PropTypes.func.isRequired,
+  data: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    completed: PropTypes.bool,
+    completedAt: PropTypes.instanceOf(Date),
+    updatedAt: PropTypes.instanceOf(Date),
+  }),
+  sortHandlers: PropTypes.shape({
+    onLongPress: PropTypes.func,
+    onPressIn: PropTypes.func,
+    onPressOut: PropTypes.func,
+  }),
+};
+
+ListViewItem.defaultProps = {
+  data: {},
+  sortHandlers: {},
+};
 
 module.exports = ListViewItem;

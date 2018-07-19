@@ -8,7 +8,6 @@ import TodoService from './TodoService';
 
 
 function getOrder(list) {
-  console.log(list)
   return Object.keys(list);
 }
 
@@ -24,32 +23,32 @@ class ListView extends Component {
   constructor(props) {
     super(props);
     this.updateDataList = this.updateDataList.bind(this);
-    this._onCompletedChange = this._onCompletedChange.bind(this);
+    this.onCompletedChange = this.onCompletedChange.bind(this);
     this.state = {
-      dataList: dataList,
+      dataList,
     };
   }
 
-  updateDataList(dataList) {
-    dataListOrder = getOrder(dataList);
-    this.setState({
-      dataList,
-    });
-  }
-
-  _onCompletedChange() {
+  onCompletedChange() {
     if (this.forceUpdate) this.forceUpdate();
   }
 
+  updateDataList(unorderedDataList) {
+    dataListOrder = getOrder(unorderedDataList);
+    this.setState({
+      dataList: unorderedDataList,
+    });
+  }
+
+
   listDisplayView() {
-    console.log(this.state.dataList);
     if (this.state.dataList.length) {
       return (<SortableListView
         style={{ flex: 1 }}
         data={this.state.dataList}
         order={dataListOrder}
         onRowMoved={e => moveOrderItem(this, e.from, e.to)}
-        renderRow={(dataItem, section, index) => <ListViewItem data={dataItem} onCompletedChange={this._onCompletedChange} />}
+        renderRow={dataItem => <ListViewItem data={dataItem} onCompletedChange={this.onCompletedChange} />}
       />);
     }
     return <View />;

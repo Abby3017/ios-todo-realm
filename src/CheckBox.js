@@ -1,39 +1,43 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-class CheckBox extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: this.props.data,    //  check this
-    };
-  }
+const CheckBox = (props) => {
+  const { data, color } = props;
+  const iconName = data.completed ? 'check-box' : 'check-box-outline-blank';
+  const changedColor = color || '#000';
 
-  componentWillReceiveProps(props) {
-    this.setState({
-      data: props.data, // check this
-    });
-  }
+  return (
+    <Icon.Button
+      data={data}
+      name={iconName}
+      backgroundColor="rgba(0,0,0,0)"
+      color={changedColor}
+      underlayColor="rgba(0,0,0,0)"
+      size={20}
+      iconStyle={{ marginLeft: -10, marginRight: 0 }}
+      activeOpacity={1}
+      borderRadius={5}
+      onPress={props.onCheckBoxPressed}
+    />
+  );
+};
 
-  render() {
-    const iconName = this.state.data.completed ? 'check-box' : 'check-box-outline-blank';
-    const color = this.props.color || '#000';
+CheckBox.propTypes = {
+  data: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    completed: PropTypes.bool,
+    completedAt: PropTypes.instanceOf(Date),
+    updatedAt: PropTypes.instanceOf(Date),
+  }),
+  color: PropTypes.string,
+  onCheckBoxPressed: PropTypes.func.isRequired,
+};
 
-    return (
-      <Icon.Button
-        data={this.state.data}
-        name={iconName}
-        backgroundColor="rgba(0,0,0,0)"
-        color={color}
-        underlayColor="rgba(0,0,0,0)"
-        size={20}
-        iconStyle={{ marginLeft: -10, marginRight: 0 }}
-        activeOpacity={1}
-        borderRadius={5}
-        onPress={this.props.onCheckBoxPressed}
-      />
-    );
-  }
-}
+CheckBox.defaultProps = {
+  data: () => {},
+  color: '#000',
+};
 
 module.exports = CheckBox;
