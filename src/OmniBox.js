@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import TodoModel from './TodoModel';
 import TodoService from './TodoService';
 import Utils from './Utils';
-import { debounce } from './helper/Util';
+import { debounceFn } from './helper/Util';
 
 class OmniBox extends Component {
   constructor(props) {
@@ -17,11 +17,19 @@ class OmniBox extends Component {
 
   onChange(event) {
     const title = event.nativeEvent.text;
-    const dataList = this.props.data.filter(item => item.title.match(new RegExp(`.*${title}.*`, 'gi')));
-    this.setState({
-      newValue: title,
-    });
-    this.props.updateDataList(dataList);
+    debounceFn(this.onChangeCallback(title), 500, this);
+    // debounce(() => { For learning purpose, why sending text to arrow function failed and inside function call doesn't happene
+    //   const dataList = this.props.data.filter(item => item.title.match(new RegExp(`.*${title}.*`, 'gi')));
+    //   this.setState({
+    //     newValue: title,
+    //   });
+    //   this.props.updateDataList(dataList);
+    // }, 500);
+    // const dataList = this.props.data.filter(item => item.title.match(new RegExp(`.*${title}.*`, 'gi')));
+    // this.setState({
+    //   newValue: title,
+    // });
+    // this.props.updateDataList(dataList);
   }
 
   onSubmitEditing() {
@@ -50,6 +58,14 @@ class OmniBox extends Component {
     this.props.updateDataList(dataList);
   }
 
+  onChangeCallback(title) {
+    const dataList = this.props.data.filter(item => item.title.match(new RegExp(`.*${title}.*`, 'gi')));
+    this.setState({
+      newValue: title,
+    });
+    this.props.updateDataList(dataList);
+  }
+
   render() {
     return (
       <TextInput
@@ -59,9 +75,12 @@ height: 36, padding: 4, marginBottom: 0, fontSize: 16, borderWidth: 1, borderCol
         placeholder="Add a todo or Search"
         blurOnSubmit={false}
         value={this.state.newValue}
-        onChange={debounce(() => {
-            this.onChange();
-          }, 500)}
+        // onChange={debounce((event) => {
+        //     // event.persist();
+        //     console.log(event);
+        //     this.onChange(event.target.value);
+        //   }, 500)}
+        onChange={this.onChange}
         onSubmitEditing={this.onSubmitEditing}
       />
     );
